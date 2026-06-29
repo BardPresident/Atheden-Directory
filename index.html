@@ -44,6 +44,66 @@
             --focus-glow:   0 0 14px rgba(255,215,0,0.1);
         }
 
+        [data-theme="party"] {
+            --bg:    #0a0010;
+            --bg2:   #110020;
+            --bg3:   #1a0030;
+            --text:  #fff;
+            --text2: #ffaaff;
+            --gold:  #ff88ff;
+            --gold2: #ff44cc;
+            --gold3: #cc00ff;
+            --border: rgba(255,0,255,0.4);
+            --btn-bg: rgba(180,0,255,0.2);
+            --btn-hover: rgba(255,0,255,0.3);
+        }
+        [data-theme="party"] body { background: #0a0010; }
+        [data-theme="party"] header {
+            background: linear-gradient(135deg, #0a0010, #200040, #0a0010);
+            border-bottom: 2px solid #ff00ff;
+            animation: party-header 2s linear infinite;
+        }
+        @keyframes party-header {
+            0%   { border-bottom-color: #ff00ff; box-shadow: 0 2px 20px #ff00ff88; }
+            16%  { border-bottom-color: #ff4400; box-shadow: 0 2px 20px #ff440088; }
+            33%  { border-bottom-color: #ffff00; box-shadow: 0 2px 20px #ffff0088; }
+            50%  { border-bottom-color: #00ff88; box-shadow: 0 2px 20px #00ff8888; }
+            66%  { border-bottom-color: #00aaff; box-shadow: 0 2px 20px #00aaff88; }
+            83%  { border-bottom-color: #aa00ff; box-shadow: 0 2px 20px #aa00ff88; }
+            100% { border-bottom-color: #ff00ff; box-shadow: 0 2px 20px #ff00ff88; }
+        }
+        [data-theme="party"] .site-name {
+            animation: party-text 1.5s linear infinite;
+        }
+        @keyframes party-text {
+            0%   { color: #ff00ff; text-shadow: 0 0 20px #ff00ff; }
+            16%  { color: #ff4400; text-shadow: 0 0 20px #ff4400; }
+            33%  { color: #ffff00; text-shadow: 0 0 20px #ffff00; }
+            50%  { color: #00ff88; text-shadow: 0 0 20px #00ff88; }
+            66%  { color: #00aaff; text-shadow: 0 0 20px #00aaff; }
+            83%  { color: #aa00ff; text-shadow: 0 0 20px #aa00ff; }
+            100% { color: #ff00ff; text-shadow: 0 0 20px #ff00ff; }
+        }
+        [data-theme="party"] .btn,
+        [data-theme="party"] .theme-btn {
+            animation: party-btn 2s linear infinite;
+        }
+        @keyframes party-btn {
+            0%   { border-color: #ff00ff; color: #ff00ff; }
+            25%  { border-color: #ffff00; color: #ffff00; }
+            50%  { border-color: #00ff88; color: #00ff88; }
+            75%  { border-color: #00aaff; color: #00aaff; }
+            100% { border-color: #ff00ff; color: #ff00ff; }
+        }
+        [data-theme="party"] .file-row:hover {
+            background: rgba(255,0,255,0.15);
+            border-left: 3px solid #ff00ff;
+        }
+        [data-theme="party"] .search-input {
+            background: rgba(100,0,200,0.2);
+            border-color: #aa00ff;
+            color: #ffaaff;
+        }
         [data-theme="light"] {
             --gold:         #6b3f00;
             --gold2:        #7a4f00;
@@ -446,19 +506,24 @@
 ════════════════════════════════════ */
 function toggleTheme() {
     const html  = document.documentElement;
-    const light = html.getAttribute('data-theme') !== 'light';
-    html.setAttribute('data-theme', light ? 'light' : 'dark');
-    document.getElementById('themeIcon').textContent  = light ? '🌙' : '☀';
-    document.getElementById('themeLabel').textContent = light ? 'DARK' : 'LIGHT';
-    try { localStorage.setItem('files-theme', light ? 'light' : 'dark'); } catch(e) {}
+    const cur   = html.getAttribute('data-theme');
+    const next  = cur === 'dark' ? 'light' : cur === 'light' ? 'party' : 'dark';
+    html.setAttribute('data-theme', next);
+    const icons  = { dark: '🌙', light: '☀', party: '🌈' };
+    const labels = { dark: 'DARK', light: 'LIGHT', party: 'PARTY' };
+    document.getElementById('themeIcon').textContent  = icons[next];
+    document.getElementById('themeLabel').textContent = labels[next];
+    try { localStorage.setItem('files-theme', next); } catch(e) {}
 }
 (function restoreTheme() {
     try {
         const t = localStorage.getItem('files-theme');
-        if (t === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.getElementById('themeIcon').textContent  = '🌙';
-            document.getElementById('themeLabel').textContent = 'DARK';
+        if (t && t !== 'dark') {
+            document.documentElement.setAttribute('data-theme', t);
+            const icons  = { light: '☀', party: '🌈' };
+            const labels = { light: 'LIGHT', party: 'PARTY' };
+            document.getElementById('themeIcon').textContent  = icons[t] || '🌙';
+            document.getElementById('themeLabel').textContent = labels[t] || 'DARK';
         }
     } catch(e) {}
 })();
